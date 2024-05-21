@@ -6,7 +6,7 @@ An AnimationClip organizer for imported .fbx files for Unity.
 Original script by Uberlou (https://pastebin.com/YhxaKdUJ), adapted & modified by Xeraclom14 (https://twitter.com/Xeraclom14).
 
 WARNING: MAKE SURE YOUR METADATA FILES ARE BACKED UP WITH VERSION CONTROL BEFORE USING!!
-The script only changes the imported AnimationClip data from the .fbx model file, which is stored whitin the metadata.
+The script only changes the imported AnimationClip data from the .fbx model file, which is stored within the metadata.
 
 Installation:
 Copy the FBXAnimationClipOrganizer.cs script into Scripts\Editor.
