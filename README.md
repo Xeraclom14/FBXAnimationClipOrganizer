@@ -1,6 +1,8 @@
 # FBX Animation Clip Organizer
 An AnimationClip organizer for imported .fbx files for Unity.
 
+![demo](https://github.com/Xeraclom14/FBXAnimationClipOrganizer/assets/58162281/2c8be5e6-c98f-438e-a478-4aa69c9dd724)
+
 Original script by Uberlou (https://pastebin.com/YhxaKdUJ), adapted & modified by Xeraclom14 (https://twitter.com/Xeraclom14).
 
 WARNING: MAKE SURE YOUR METADATA FILES ARE BACKED UP WITH VERSION CONTROL BEFORE USING!!
