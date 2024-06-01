@@ -4,11 +4,11 @@ FBX AnimationClip Organizer 1.2
 Original script by Uberlou (https://pastebin.com/YhxaKdUJ), adapted & modified by Xeraclom14 (https://twitter.com/Xeraclom14).
 
 WARNING: MAKE SURE YOUR METADATA FILES ARE BACKED UP WITH VERSION CONTROL BEFORE USING!!
-This script only changes the imported AnimationClip data from the .fbx model file, which is stored whitin the metadata.
+The script only changes the imported AnimationClip data from the .fbx model file, which is stored within the metadata.
 
 Installation:
 Copy this C# script into Scripts\Editor.
- 
+
 Usage:
 1) To open, go to Window -> FBX Animation Organizer
 2) Drag and drop your .fbx model file into the "FBX File" field.
