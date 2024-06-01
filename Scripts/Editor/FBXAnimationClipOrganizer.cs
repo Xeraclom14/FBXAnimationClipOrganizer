@@ -1,6 +1,6 @@
 /*******************
 
-FBX AnimationClip Organizer 1.1
+FBX AnimationClip Organizer 1.2
 Original script by Uberlou (https://pastebin.com/YhxaKdUJ), adapted & modified by Xeraclom14 (https://twitter.com/Xeraclom14).
 
 WARNING: MAKE SURE YOUR METADATA FILES ARE BACKED UP WITH VERSION CONTROL BEFORE USING!!
@@ -12,8 +12,12 @@ Copy this C# script into Scripts\Editor.
 Usage:
 1) To open, go to Window -> FBX Animation Organizer
 2) Drag and drop your .fbx model file into the "FBX File" field.
-3) Reorder the Animation clips in the list to your liking, or alternatively sort them alphabetically.
+3) Reorder the Animation clips in the list to your liking, or alternatively sort the list.
 4) Press "Save Changes" to update your changes.
+
+Changes in version 1.2:
+- Added label to show clip duration.
+- Added functionality to sort A-Z, Z-A and by clip duration (ascending and descending order).
 
 Changelog from old version by Uberlou:
 - Input now only requires to drag and drop the .fbx file directly. (No longer requires inputting file path then manually search for metadata in dropdowns).
@@ -73,7 +77,7 @@ public class FBXAnimationClipOrganizer : EditorWindow
 
         if (filePath.ToLower().EndsWith(".fbx") && File.Exists(filePath) && File.Exists(metaPath))
         {
-            if (oldFilePath != filePath)
+            if (oldFilePath != filePath || animationClips.Count == 0)
             {
                 ImportData();
             }
@@ -131,7 +135,7 @@ public class FBXAnimationClipOrganizer : EditorWindow
             }
             else if (filePath.ToLower().EndsWith(".blend"))
             {
-                GUILayout.Label("This is a blender file, you silly.");
+                GUILayout.Label("This is a blender file, silly.");
             }
             else if (!filePath.ToLower().EndsWith(".fbx"))
             {
@@ -145,37 +149,42 @@ public class FBXAnimationClipOrganizer : EditorWindow
             return;
         }
 
+        GUILayout.BeginHorizontal();
 
-        if (GUILayout.Button("Sort Alphabetically", GUILayout.Height(30)))
+        if (GUILayout.Button("Sort A-Z", GUILayout.Height(30)))
         {
-            for (int i = 0; i < animationClips.Count(); i++)
-            {
-                int firstIndex = i;
-                string currentfirst = GetAnimationDataName(animationClips[i]);
-
-                for (int j = i; j < animationClips.Count() - 1; j++)
-                {
-                    string animName = GetAnimationDataName(animationClips[j + 1]);
-
-                    if (string.Compare(currentfirst, animName, false) == 1)
-                    {
-                        currentfirst = animName;
-                        firstIndex = j + 1;
-                    }
-                }
-
-                if(firstIndex > i)
-                {
-                    // swap anims
-                    List<string> temp;
-                    temp = animationClips[i];
-                    animationClips[i] = animationClips[firstIndex];
-                    animationClips[firstIndex] = temp;
-                }
-            }
+            SortAZ();
         }
 
-        GUILayout.Label("Animation Clip Count: " + animationClips.Count);
+        if (GUILayout.Button("Sort Z-A", GUILayout.Height(30)))
+        {
+            SortZA();
+        }
+
+        if (GUILayout.Button("Sort by duration \u2193", GUILayout.Height(30)))
+        {
+            SortAZ();
+            SortByDuration();
+        }
+
+        if (GUILayout.Button("Sort by duration \u2191", GUILayout.Height(30)))
+        {
+            SortZA();
+            SortByDuration();
+            animationClips.Reverse();
+        }
+
+        GUILayout.EndHorizontal();
+
+        GUILayout.BeginHorizontal();
+
+        GUIStyle style = new GUIStyle(GUI.skin.label);
+
+        GUILayout.Label("Animation Clip Count: " + animationClips.Count, style);
+        style.alignment = TextAnchor.MiddleRight;
+        GUILayout.Label("Clip duration (in frames)   ", style);
+
+        GUILayout.EndHorizontal();
 
         scroll = GUILayout.BeginScrollView(scroll);
 
@@ -221,6 +230,70 @@ public class FBXAnimationClipOrganizer : EditorWindow
         reorderableList.drawElementCallback = OnDrawListItem;
     }
 
+    private void SortAZ()
+    {
+        for (int i = 0; i < animationClips.Count(); i++)
+        {
+            int firstIndex = i;
+            string currentfirst = GetAnimationDataName(animationClips[i]);
+
+            for (int j = i; j < animationClips.Count() - 1; j++)
+            {
+                string animName = GetAnimationDataName(animationClips[j + 1]);
+
+                if (string.Compare(currentfirst, animName, false) > 0)
+                {
+                    currentfirst = animName;
+                    firstIndex = j + 1;
+                }
+            }
+
+            if (firstIndex > i)
+            {
+                // swap anims
+                List<string> temp;
+                temp = animationClips[i];
+                animationClips[i] = animationClips[firstIndex];
+                animationClips[firstIndex] = temp;
+            }
+        }
+    }
+
+    private void SortZA()
+    {
+        SortAZ();
+        animationClips.Reverse();
+    }
+
+    private void SortByDuration()
+    {
+        for (int i = 0; i < animationClips.Count(); i++)
+        {
+            int lowestIndex = i;
+            int lowest = GetAnimationDataDuration(animationClips[i]);
+
+            for (int j = i; j < animationClips.Count() - 1; j++)
+            {
+                int duration = GetAnimationDataDuration(animationClips[j + 1]);
+
+                if (duration < lowest)
+                {
+                    lowest = duration;
+                    lowestIndex = j + 1;
+                }
+            }
+
+            if (lowestIndex > i)
+            {
+                // swap anims
+                List<string> temp;
+                temp = animationClips[i];
+                animationClips[i] = animationClips[lowestIndex];
+                animationClips[lowestIndex] = temp;
+            }
+        }
+    }
+
     //Resets all the data
     private void ClearData()
     {
@@ -234,9 +307,23 @@ public class FBXAnimationClipOrganizer : EditorWindow
         return animData[animData.Count - 2].TrimStart().Replace("name: ", "");
     }
 
+    private int GetAnimationDataDuration(List<string> animData)
+    {
+        int init = int.Parse(animData[animData.Count - 5].TrimStart().Replace("firstFrame: ", ""));
+        int end = int.Parse(animData[animData.Count - 6].TrimStart().Replace("lastFrame: ", ""));
+
+        return end - init;
+    }
+
     private void OnDrawListItem(Rect rect, int index, bool isActive, bool isFocused)
     {
-        string prefix = index + ":\t";
-        EditorGUI.LabelField(rect, prefix + GetAnimationDataName(animationClips[index]));
+        string prefix = (index + ":").PadRight(6);
+
+        GUIStyle style = EditorStyles.label;
+
+        style.alignment = TextAnchor.MiddleLeft;
+        EditorGUI.LabelField(rect, prefix + GetAnimationDataName(animationClips[index]), style);
+        style.alignment = TextAnchor.MiddleRight;
+        EditorGUI.LabelField(rect, GetAnimationDataDuration(animationClips[index]).ToString(), style);
     }
 }
