@@ -4,7 +4,7 @@ FBX AnimationClip Organizer 1.2
 Original script by Uberlou (https://pastebin.com/YhxaKdUJ), adapted & modified by Xeraclom14 (https://twitter.com/Xeraclom14).
 
 WARNING: MAKE SURE YOUR METADATA FILES ARE BACKED UP WITH VERSION CONTROL BEFORE USING!!
-The script only changes the imported AnimationClip data from the .fbx model file, which is stored within the metadata.
+This script only changes the imported AnimationClip data from the .fbx model file, which is stored within the metadata.
 
 Installation:
 Copy this C# script into Scripts\Editor.
@@ -14,6 +14,9 @@ Usage:
 2) Drag and drop your .fbx model file into the "FBX File" field.
 3) Reorder the Animation clips in the list to your liking, or alternatively sort the list.
 4) Press "Save Changes" to update your changes.
+
+Changes in version 1.3:
+- Fixed a bug that caused various elements from the rest of the layout UI text to be right-aligned.
 
 Changes in version 1.2:
 - Added label to show clip duration.
@@ -321,9 +324,9 @@ public class FBXAnimationClipOrganizer : EditorWindow
 
         GUIStyle style = EditorStyles.label;
 
-        style.alignment = TextAnchor.MiddleLeft;
-        EditorGUI.LabelField(rect, prefix + GetAnimationDataName(animationClips[index]), style);
         style.alignment = TextAnchor.MiddleRight;
         EditorGUI.LabelField(rect, GetAnimationDataDuration(animationClips[index]).ToString(), style);
+        style.alignment = TextAnchor.MiddleLeft;
+        EditorGUI.LabelField(rect, prefix + GetAnimationDataName(animationClips[index]), style);
     }
 }

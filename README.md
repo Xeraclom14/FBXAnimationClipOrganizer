@@ -10,12 +10,15 @@ The script only changes the imported AnimationClip data from the .fbx model file
 
 Installation:
 Copy the FBXAnimationClipOrganizer.cs script into Scripts\Editor.
- 
+
 Usage:
 1) To open, go to Window -> FBX Animation Organizer
 2) Drag and drop your .fbx model file into the "FBX File" field.
 3) Reorder the Animation clips in the list to your liking, or alternatively sort the list.
 4) Press "Save Changes" to update your changes.
+
+Changes in version 1.3:
+- Fixed a bug that caused various elements from the rest of the layout UI text to be right-aligned.
 
 Changes in version 1.2:
 - Added label to show clip duration.
